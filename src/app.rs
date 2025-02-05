@@ -12,7 +12,11 @@ pub struct App {
 impl Default for App {
     fn default() -> Self {
         Self {
-            tex_code: r"Here comes some text \[x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}\]".to_owned(),
+            tex_code: r"Here comes some text
+            \[
+                x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+            \]"
+            .to_owned(),
             typst_code: String::new(),
         }
     }
@@ -100,14 +104,16 @@ impl eframe::App for App {
         });
 
         egui::TopBottomPanel::bottom("bottom_panel").show(ctx, |ui| {
-            ui.add(egui::github_link_file!(
-                "https://github.com/Unpredictability/tex2typst-UI/blob/main/",
-                "Source code."
-            ));
+            ui.horizontal(|ui| {
+                ui.add(egui::github_link_file!(
+                    "https://github.com/Unpredictability/tex2typst-UI/blob/main/",
+                    "Source code."
+                ));
 
-            ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
-                powered_by(ui);
-                egui::warn_if_debug_build(ui);
+                ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
+                    powered_by(ui);
+                    egui::warn_if_debug_build(ui);
+                });
             });
         });
     }
