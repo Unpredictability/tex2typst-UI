@@ -13,9 +13,9 @@ impl Default for App {
     fn default() -> Self {
         Self {
             tex_code: r"Here comes some text
-            \[
-                x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
-            \]"
+\[
+    x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+\]"
             .to_owned(),
             typst_code: String::new(),
         }
