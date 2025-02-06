@@ -11,7 +11,7 @@ fn main() -> eframe::Result {
             .with_min_inner_size([300.0, 220.0])
             .with_icon(
                 // NOTE: Adding an icon is optional
-                eframe::icon_data::from_png_bytes(&include_bytes!("../assets/android-chrome-512x512.png")[..])
+                eframe::icon_data::from_png_bytes(&include_bytes!("../assets/512x512.png")[..])
                     .expect("Failed to load icon"),
             ),
         ..Default::default()

@@ -68,6 +68,13 @@ impl eframe::App for App {
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
+
+            ui.heading("TeX to Typst Convert Demo");
+
+            ui.label("This is a wrapper of tex2typst-rs compiled to WASM, which means it runs natively in your browser.");
+
+            ui.separator();
+
             let cols = ui.columns(2, |columns| {
                 // 左侧
                 columns[0].push_id("left", |ui| {
@@ -100,7 +107,7 @@ impl eframe::App for App {
                                     .code_editor()
                                     .desired_width(ui.available_width())
                                     .desired_rows(25)
-                                    .layouter(&mut layouter),
+                                    .layouter(&mut layouter)
                             );
                         });
                     })
@@ -137,7 +144,7 @@ impl eframe::App for App {
                                     .code_editor()
                                     .desired_width(ui.available_width())
                                     .desired_rows(25)
-                                    .layouter(&mut layouter),
+                                    .layouter(&mut layouter)
                             );
                         });
                     })

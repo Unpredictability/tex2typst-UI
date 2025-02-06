@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
 <head>
-    <title>TeX to Typst UI</title>
+    <title>TeX to Typst Demo</title>
 
     <!-- config for our rust wasm binary. go to https://trunkrs.dev/assets/#rust for more customization -->
     <link data-trunk rel="rust" data-wasm-opt="2"/>
@@ -16,19 +16,10 @@
     <link data-trunk rel="icon" href="assets/favicon.ico">
 
 
-    <link data-trunk rel="copy-file" href="assets/sw.js"/>
-    <link data-trunk rel="copy-file" href="assets/manifest.json"/>
-    <link data-trunk rel="copy-file" href="assets/android-chrome-192x192.png" data-target-path="assets"/>
-    <link data-trunk rel="copy-file" href="assets/android-chrome-512x512.png" data-target-path="assets"/>
-    <link data-trunk rel="copy-file" href="assets/apple-touch-icon.png" data-target-path="assets"/>
-    <link data-trunk rel="copy-file" href="assets/favicon-16x16.png" data-target-path="assets"/>
-    <link data-trunk rel="copy-file" href="assets/favicon-32x32.png" data-target-path="assets"/>
-
     <link data-trunk rel="copy-file" href="assets/NotoSansSC-Regular.ttf" data-target-path="assets"/>
 
 
     <link rel="manifest" href="assets/manifest.json">
-    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="white">
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#404040">
 
@@ -133,16 +124,6 @@
     <div class="lds-dual-ring"></div>
 </div>
 
-<!--Register Service Worker. this will cache the wasm / js scripts for offline use (for PWA functionality). -->
-<!-- Force refresh (Ctrl + F5) to load the latest files instead of cached files  -->
-<!--<script>-->
-<!--    // We disable caching during development so that we always view the latest version.-->
-<!--    if ('serviceWorker' in navigator && window.location.hash !== "#dev") {-->
-<!--        window.addEventListener('load', function () {-->
-<!--            navigator.serviceWorker.register('sw.js');-->
-<!--        });-->
-<!--    }-->
-<!--</script>-->
 </body>
 
 </html>
