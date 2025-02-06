@@ -56,7 +56,7 @@ impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         match text_and_tex2typst(&self.tex_code) {
             Ok(typst_code) => {
-                self.typst_code = typst_code;
+                self.typst_code = typstyle_core::format_with_width(&typst_code, 80);
             }
             Err(e) => {
                 self.typst_code = format!("Error: {}", e);
@@ -75,11 +75,32 @@ impl eframe::App for App {
                         ui.heading("LaTeX Input");
                         ui.add_space(20.0);
                         egui::ScrollArea::vertical().show(ui, |ui| {
+                            let mut theme =
+                                egui_extras::syntax_highlighting::CodeTheme::from_memory(ui.ctx(), ui.style());
+                            ui.collapsing("Theme", |ui| {
+                                ui.group(|ui| {
+                                    theme.ui(ui);
+                                    theme.clone().store_in_memory(ui.ctx());
+                                });
+                            });
+
+                            let mut layouter = |ui: &egui::Ui, string: &str, wrap_width: f32| {
+                                let mut layout_job = egui_extras::syntax_highlighting::highlight(
+                                    ui.ctx(),
+                                    ui.style(),
+                                    &theme,
+                                    string,
+                                    "tex".into(),
+                                );
+                                layout_job.wrap.max_width = wrap_width;
+                                ui.fonts(|f| f.layout_job(layout_job))
+                            };
                             ui.add(
                                 egui::TextEdit::multiline(&mut self.tex_code)
                                     .code_editor()
                                     .desired_width(ui.available_width())
-                                    .desired_rows(30),
+                                    .desired_rows(25)
+                                    .layouter(&mut layouter),
                             );
                         });
                     })
@@ -91,11 +112,32 @@ impl eframe::App for App {
                         ui.heading("Typst Output");
                         ui.add_space(20.0);
                         egui::ScrollArea::vertical().show(ui, |ui| {
+                            let mut theme =
+                                egui_extras::syntax_highlighting::CodeTheme::from_memory(ui.ctx(), ui.style());
+                            ui.collapsing("Theme", |ui| {
+                                ui.group(|ui| {
+                                    theme.ui(ui);
+                                    theme.clone().store_in_memory(ui.ctx());
+                                });
+                            });
+
+                            let mut layouter = |ui: &egui::Ui, string: &str, wrap_width: f32| {
+                                let mut layout_job = egui_extras::syntax_highlighting::highlight(
+                                    ui.ctx(),
+                                    ui.style(),
+                                    &theme,
+                                    string,
+                                    "tex".into(),
+                                );
+                                layout_job.wrap.max_width = wrap_width;
+                                ui.fonts(|f| f.layout_job(layout_job))
+                            };
                             ui.add(
                                 egui::TextEdit::multiline(&mut self.typst_code)
                                     .code_editor()
                                     .desired_width(ui.available_width())
-                                    .desired_rows(30),
+                                    .desired_rows(25)
+                                    .layouter(&mut layouter),
                             );
                         });
                     })
@@ -128,8 +170,10 @@ fn powered_by(ui: &mut egui::Ui) {
         ui.spacing_mut().item_spacing.x = 0.0;
         ui.label("Powered by ");
         ui.hyperlink_to(
-            "tex2typst-rs",
+            "tex2typst-rs. ",
             "https://github.com/Unpredictability/tex2typst-rs",
         );
+        ui.label("Formatter ");
+        ui.hyperlink_to("typstyle.", "https://github.com/Enter-tainer/typstyle");
     });
 }
