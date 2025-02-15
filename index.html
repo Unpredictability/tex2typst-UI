@@ -1,129 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
-<!-- Disable zooming: -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta charset="UTF-8"/>
 
 <head>
-    <title>TeX to Typst Demo</title>
+    <title>tex2typst-rs Demo</title>
 
-    <!-- config for our rust wasm binary. go to https://trunkrs.dev/assets/#rust for more customization -->
-    <link data-trunk rel="rust" data-wasm-opt="2"/>
-    <!-- this is the base url relative to which other urls will be constructed. trunk will insert this from the public-url option -->
-    <base data-trunk-public-url/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/themes/light.css"/>
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/shoelace-autoloader.js"></script>
 
-    <link data-trunk rel="icon" href="assets/favicon.ico">
-
-
-    <link data-trunk rel="copy-file" href="assets/NotoSansSC-Regular.ttf" data-target-path="assets"/>
-
-
-    <link rel="manifest" href="assets/manifest.json">
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="white">
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#404040">
 
     <style>
-        html {
-            /* Remove touch delay: */
-            touch-action: manipulation;
-        }
-
         body {
-            /* Light mode background color for what is not covered by the egui canvas,
-            or where the egui canvas is translucent. */
-            background: #909090;
+            margin: 0;
+            font-family: sans-serif;
+            background-color: #f8f9fa; /* Light gray background */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
-        @media (prefers-color-scheme: dark) {
-            body {
-                /* Dark mode background color for what is not covered by the egui canvas,
-                or where the egui canvas is translucent. */
-                background: #404040;
-            }
-        }
-
-        /* Allow canvas to fill entire web page: */
-        html,
-        body {
-            overflow: hidden;
-            margin: 0 !important;
-            padding: 0 !important;
-            height: 100%;
-            width: 100%;
-        }
-
-        /* Make canvas fill entire document: */
-        canvas {
-            margin-right: auto;
-            margin-left: auto;
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .centered {
-            margin-right: auto;
-            margin-left: auto;
-            display: block;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #f0f0f0;
-            font-size: 24px;
-            font-family: Ubuntu-Light, Helvetica, sans-serif;
+        header, footer {
+            padding: 0.5rem;
             text-align: center;
+            width: 100%;
         }
 
-        /* ---------------------------------------------- */
-        /* Loading animation from https://loading.io/css/ */
-        .lds-dual-ring {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
+        main {
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            height: calc(100vh - 6rem); /* Adjusted for header/footer */
+            overflow: hidden;
         }
 
-        .lds-dual-ring:after {
-            content: " ";
-            display: block;
-            width: 24px;
-            height: 24px;
-            margin: 0px;
-            border-radius: 50%;
-            border: 3px solid #fff;
-            border-color: #fff transparent #fff transparent;
-            animation: lds-dual-ring 1.2s linear infinite;
+        /* Make the split panel fill the remaining space */
+        sl-split-panel {
+            width: 100%;
         }
 
-        @keyframes lds-dual-ring {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+        sl-split-panel::part(divider) {
+            background: transparent;
+            border: none;
         }
+
+        /* Styling for details section */
+        sl-details {
+            margin-top: 1rem;
+        }
+
+        /* Optional: Make textareas look better */
+        .code-area {
+            font-family: monospace;
+            border-radius: 5px;
+        }
+
     </style>
 </head>
 
 <body>
-<!-- The WASM code will resize the canvas dynamically -->
-<!-- the id is hardcoded in main.rs . so, make sure both match. -->
-<canvas id="the_canvas_id"></canvas>
+<header>
+    <h1>tex2typst-rs Demo</h1>
+</header>
 
-<!-- the loading spinner will be removed in main.rs -->
-<div class="centered" id="loading_text">
-    <p style="font-size:16px">
-        Loading…
-    </p>
-    <div class="lds-dual-ring"></div>
-</div>
+<main>
+    <!-- A split panel with the TeX input on the left (start), Typst output on the right (end) -->
+    <sl-split-panel>
+        <div slot="start">
+            <sl-textarea id="tex" class="code-area" label="TeX Input" rows="14">
+            </sl-textarea>
+        </div>
+        <div slot="end">
+            <sl-textarea id="typst" class="code-area" readonly label="Typst Output" rows="14">
+            </sl-textarea>
+        </div>
+    </sl-split-panel>
+    <!-- Custom macros section -->
+    <sl-details summary="Custom Macros">
+        <div class="custom-macros">
+            <sl-textarea class="code-area">
+            </sl-textarea>
+        </div>
+        <sl-button>Register Macros</sl-button>
+    </sl-details>
+</main>
+
+<footer>
+    <p>Powered by <a href="https://github.com/Unpredictability/tex2typst-rs">tex2typst-rs</a></p>
+</footer>
+
+<script type="module">
+    window.addEventListener("TrunkApplicationStarted", (event) => {
+        console.log("WASM fully loaded", event.detail.wasm);
+
+        // Now it's safe to use your Worker
+        let worker = new window.wasmBindings.Worker();
+
+        // Example: Hook up TeX input to call the worker
+        document.getElementById("tex").addEventListener("input", async (event) => {
+            const input = event.target.value;
+            try {
+                const output = await worker.work(input);
+                document.getElementById("typst").value = output;
+            } catch (error) {
+                console.error("Error processing TeX input:", error);
+            }
+        });
+    });
+</script>
 
 </body>
-
 </html>
