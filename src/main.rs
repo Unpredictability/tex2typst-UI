@@ -11,7 +11,6 @@ use wasm_bindgen::prelude::*;
 struct Worker {
     tex_parser: LatexParser,
     command_registry: CommandRegistry,
-    typst_writer: TypstWriter,
     regex: Regex,
 }
 
@@ -21,12 +20,10 @@ impl Worker {
     pub fn new() -> Self {
         let tex_parser = LatexParser::new(false, false);
         let command_registry = CommandRegistry::new();
-        let typst_writer = TypstWriter::new();
         let regex = Regex::new(r"\\\((.+?)\\\)|(?s)\\\[(.+?)\\\]").unwrap();
         Worker {
             tex_parser,
             command_registry,
-            typst_writer,
             regex,
         }
     }
