@@ -8,4 +8,4 @@ Pages. [Web Demo](https://unpredictability.github.io/tex2typst-UI/).
 
 # Screenshot
 
-![Screenshot](new_ui_screenshot.png)
+![Screenshot](screenshot.png)
