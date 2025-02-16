@@ -2,15 +2,22 @@
 <html lang="en" class="sl-theme-dark">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="Convert LaTeX math to Typst as you type!"/>
+<meta name="keywords" content="LaTeX, Typst, Math, Converter, WASM, Rust, WebAssembly, Demo"/>
 
 <head>
-    <title>tex2typst-rs Demo</title>
+    <title>TeX2Typst Converter</title>
+
+    <link rel="icon" href="/favicon-b7eb7ef873070f1b.ico" integrity="sha384&#x2D;AEf1jwsQQsKF&#x2B;7WapY4CC9aTqM7RfxCHRRjLps6YLsGwI8IyEOcbhe3v0KBV9wwx"/>
+
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/themes/light.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/themes/dark.css"/>
     <script type="module"
             src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/components/alert/alert.js"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/shoelace-autoloader.js"></script>
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/shoelace-autoloader.js"></script>
 
     <style>
         :root {
@@ -182,13 +189,17 @@
             box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
         }
     </style>
-<link rel="modulepreload" href="/tex2typst-UI-e91fdf4ffe09fd5d.js" crossorigin="anonymous" integrity="sha384-AMNmBs70v5Q2UvzUbuMpmqhARfrC7kS+wi8aiNSaD/+jWsxxI3CtJr1jUl4DhQn8"><link rel="preload" href="/tex2typst-UI-e91fdf4ffe09fd5d_bg.wasm" crossorigin="anonymous" integrity="sha384-BDW2gf7FoidttOoaYVZPVTAO4H9mg66Z/E4eolqUGQtll/moxFW3bIjXWNWlczM0" as="fetch" type="application/wasm"></head>
+<link rel="modulepreload" href="/tex2typst-UI-cf024b887a87d3db.js" crossorigin="anonymous" integrity="sha384-DooEfwzAQKq3mL8eZ1HWdxL4gS69xxAxJKtQDTtvLxd7OCbBCcdMyA+czLTh4GtF"><link rel="preload" href="/tex2typst-UI-cf024b887a87d3db_bg.wasm" crossorigin="anonymous" integrity="sha384-PVBeyc+tqHQHI953k5vBeHvS72RciqGxV8TTZRUuU1KaJmcBL8TrOoINkcc4IP3E" as="fetch" type="application/wasm"></head>
 
 <body>
 <header>
-    <h1>tex2typst-rs Demo</h1>
+    <h1>TeX2Typst Converter
+        <a href="https://github.com/Unpredictability/tex2typst-UI" target="_blank" rel="noopener noreferrer">
+            <sl-icon-button name="github" label="GitHub Repository" style="font-size: 1.5rem"></sl-icon-button>
+        </a>
+    </h1>
     <div id="title-container">
-        <p id="title-message">Convert LaTeX math to Typst as you type!</p>
+        <p id="title-message">Convert LaTeX math to Typst as you type! </p>
         <sl-icon-button name="info-circle" label="How it works"
                         onclick="document.querySelector('.how-it-works').show();"></sl-icon-button>
     </div>
@@ -220,7 +231,8 @@
                     <div slot="label" id="typst-output-label">
                         <p>Typst Output</p>
                         <sl-icon-button name="info-circle" label="How it works"
-                                        style="font-size: 1rem;"i onclick="document.querySelector('.output-format').show()"></sl-icon-button>
+                                        style="font-size: 1rem;" i
+                                        onclick="document.querySelector('.output-format').show()"></sl-icon-button>
                     </div>
                 </sl-textarea>
             </div>
@@ -263,7 +275,8 @@
 
 <sl-dialog label="Output Format" class="output-format">
     <p>
-        The output is in <a href="https://typst.app/">Typst</a> format. Typst is a simple markup language for math typesetting. It is designed to be
+        The output is in <a href="https://typst.app/">Typst</a> format. Typst is a simple markup language for math
+        typesetting. It is designed to be
         simple and easy to read.
     </p>
 </sl-dialog>
@@ -446,8 +459,8 @@ The following use some custom macros (see below)
 
 
 <script type="module">
-import init, * as bindings from '/tex2typst-UI-e91fdf4ffe09fd5d.js';
-const wasm = await init({ module_or_path: '/tex2typst-UI-e91fdf4ffe09fd5d_bg.wasm' });
+import init, * as bindings from '/tex2typst-UI-cf024b887a87d3db.js';
+const wasm = await init({ module_or_path: '/tex2typst-UI-cf024b887a87d3db_bg.wasm' });
 
 
 window.wasmBindings = bindings;
