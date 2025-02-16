@@ -1,8 +1,10 @@
 # tex2typst-UI
 
-This is a simple GUI for the [tex2typset-rs](https://github.com/Unpredictability/tex2typst-rs).
+It converts TeX math to Typst as you type. It uses [tex2typst-rs](https://crates.io/crates/tex2typst-rs) with
+WebAssembly under the hood.
 
-See it in action here -> [https://unpredictability.github.io/tex2typst-UI/](https://unpredictability.github.io/tex2typst-UI/).
+See it in action here on GitHub
+Pages. [Web Demo](https://unpredictability.github.io/tex2typst-UI/).
 
 # Screenshot
 
