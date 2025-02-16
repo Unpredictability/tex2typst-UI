@@ -9,7 +9,7 @@
     <inspection_tool class="HtmlUnknownTag" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myValues">
         <value>
-          <list size="10">
+          <list size="19">
             <item index="0" class="java.lang.String" itemvalue="nobr" />
             <item index="1" class="java.lang.String" itemvalue="noembed" />
             <item index="2" class="java.lang.String" itemvalue="comment" />
@@ -20,6 +20,15 @@
             <item index="7" class="java.lang.String" itemvalue="sl-textarea" />
             <item index="8" class="java.lang.String" itemvalue="sl-details" />
             <item index="9" class="java.lang.String" itemvalue="sl-button" />
+            <item index="10" class="java.lang.String" itemvalue="sl-alert" />
+            <item index="11" class="java.lang.String" itemvalue="sl-select" />
+            <item index="12" class="java.lang.String" itemvalue="sl-option" />
+            <item index="13" class="java.lang.String" itemvalue="sl-dropdown" />
+            <item index="14" class="java.lang.String" itemvalue="sl-menu" />
+            <item index="15" class="java.lang.String" itemvalue="sl-menu-item" />
+            <item index="16" class="java.lang.String" itemvalue="sl-icon" />
+            <item index="17" class="java.lang.String" itemvalue="sl-dialog" />
+            <item index="18" class="java.lang.String" itemvalue="sl-icon-button" />
           </list>
         </value>
       </option>

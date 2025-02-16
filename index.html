@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="sl-theme-dark">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta charset="UTF-8"/>
 
@@ -7,20 +7,35 @@
     <title>tex2typst-rs Demo</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/themes/light.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/themes/dark.css"/>
     <script type="module"
             src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/shoelace-autoloader.js"></script>
-
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/components/alert/alert.js"></script>
 
     <style>
+        :root {
+            --background-color-light: #ececed; /* Light mode background */
+            --background-color-dark: #131317; /* Dark mode background */
+            --main-background-color-light: #fff; /* Light mode main background */
+            --main-background-color-dark: #222327; /* Dark mode main background */
+        }
+
         body {
             margin: 0;
             font-family: sans-serif;
-            background-color: #f8f9fa; /* Light gray background */
+            background-color: var(--background-color-light);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
+            overflow: hidden;
+        }
+
+        .sl-theme-dark body {
+            background-color: var(--background-color-dark);
+            color: white;
         }
 
         header, footer {
@@ -29,16 +44,52 @@
             width: 100%;
         }
 
+        header h1 {
+            margin-bottom: 0.2rem; /* Reduce spacing below the title */
+        }
+
+        #title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        #title-message {
+            margin-top: 1.0rem; /* Reduce spacing above the message */
+        }
+
+        #theme-select {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+        }
+
         main {
             width: 90%;
-            max-width: 800px;
-            background: white;
-            padding: 1rem;
-            border-radius: 10px;
+            max-width: 1000px;
+            background: var(--main-background-color-light);
+            padding: 0;
+            border-radius: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border: 1px solid #ddd;
-            height: calc(100vh - 6rem); /* Adjusted for header/footer */
+            height: calc(100vh - 5rem); /* Adjusted for header/footer */
             overflow: hidden;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .sl-theme-dark main {
+            background: var(--main-background-color-dark);
+            color: white;
+            border-color: #555;
         }
 
         /* Make the split panel fill the remaining space */
@@ -56,61 +107,322 @@
             margin-top: 1rem;
         }
 
-        /* Optional: Make textareas look better */
-        .code-area {
-            font-family: monospace;
-            border-radius: 5px;
+        sl-details::part(base) {
+            border-radius: 15px;
+            margin-bottom: 2rem;
         }
 
+        sl-button::part(base) {
+            border-radius: 15px;
+        }
+
+        sl-textarea::part(form-control-label) {
+            margin-left: 0.5rem;
+            font-family: sans-serif;
+            font-weight: bold;
+            color: #222222;
+            margin-bottom: 0.5rem;
+        }
+
+        .sl-theme-dark sl-textarea::part(form-control-label) {
+            color: white;
+        }
+
+        sl-textarea::part(base) {
+            font-family: monospace;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        sl-alert::part(base) {
+            border-radius: 15px;
+        }
+
+        sl-dialog::part(panel) {
+            border-radius: 15px;
+        }
+
+        sl-dialog::part(title) {
+            padding: 1.5rem;
+        }
+
+        sl-dialog > p {
+            margin: 0;
+            padding: 1rem;
+        }
+
+        #tex-input-label, #typst-output-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #tex-input-label > p, #typst-output-label > p {
+            margin: 0;
+        }
+
+        #register {
+            display: block;
+            margin-top: 15px; /* Adjust spacing as needed */
+        }
     </style>
 </head>
 
 <body>
 <header>
     <h1>tex2typst-rs Demo</h1>
+    <div id="title-container">
+        <p id="title-message">Convert LaTeX math to Typst as you type!</p>
+        <sl-icon-button name="info-circle" label="How it works"
+                        onclick="document.querySelector('.how-it-works').show();"></sl-icon-button>
+    </div>
+    <sl-dropdown id="theme-select">
+        <sl-button slot="trigger" caret>Theme</sl-button>
+        <sl-menu>
+            <sl-menu-item value="light">Light</sl-menu-item>
+            <sl-menu-item value="dark">Dark</sl-menu-item>
+            <sl-menu-item value="system">System</sl-menu-item>
+        </sl-menu>
+    </sl-dropdown>
 </header>
 
 <main>
-    <!-- A split panel with the TeX input on the left (start), Typst output on the right (end) -->
-    <sl-split-panel>
-        <div slot="start">
-            <sl-textarea id="tex" class="code-area" label="TeX Input" rows="14">
+    <div class="content">
+        <!-- A split panel with the TeX input on the left (start), Typst output on the right (end) -->
+        <sl-split-panel disabled>
+            <div slot="start">
+                <sl-textarea id="tex" class="code-area" rows="14">
+                    <div slot="label" id="tex-input-label">
+                        <p>Tex Input</p>
+                        <sl-icon-button name="info-circle" label="How it works" style="font-size: 1rem;"
+                                        onclick="document.querySelector('.supported-input').show()"></sl-icon-button>
+                    </div>
+                </sl-textarea>
+            </div>
+            <div slot="end">
+                <sl-textarea id="typst" class="code-area" readonly rows="14">
+                    <div slot="label" id="typst-output-label">
+                        <p>Typst Output</p>
+                        <sl-icon-button name="info-circle" label="How it works"
+                                        style="font-size: 1rem;"i onclick="document.querySelector('.output-format').show()"></sl-icon-button>
+                    </div>
+                </sl-textarea>
+            </div>
+        </sl-split-panel>
+        <!-- Custom macros section -->
+        <sl-details summary="Custom Macros">
+            <sl-textarea class="code-area" id="macros" rows="6">
             </sl-textarea>
-        </div>
-        <div slot="end">
-            <sl-textarea id="typst" class="code-area" readonly label="Typst Output" rows="14">
-            </sl-textarea>
-        </div>
-    </sl-split-panel>
-    <!-- Custom macros section -->
-    <sl-details summary="Custom Macros">
-        <div class="custom-macros">
-            <sl-textarea class="code-area">
-            </sl-textarea>
-        </div>
-        <sl-button>Register Macros</sl-button>
-    </sl-details>
+            <sl-button variant="primary" id="register" outline>Register Macros</sl-button>
+        </sl-details>
+    </div>
 </main>
+
+
+<sl-alert variant="danger" id="error-message">
+    <sl-icon slot="icon" name="exclamation-octagon"></sl-icon>
+    This is a standard alert. You can customize its content and even the icon.
+</sl-alert>
+
+<sl-alert id="loading" variant="primary">
+    <sl-icon slot="icon" name="info-circle"></sl-icon>
+    <strong>Loading WASM (~ 1MB)!</strong><br/>
+    Please wait! The WASM binaries are still loading!
+</sl-alert>
+
+<sl-dialog label="How it works" class="how-it-works">
+    <p>
+        This is a simple demo of the <a href="https://github.com/Unpredictability/tex2typst-rs">tex2typst-rs</a>
+        library. It uses WASM to communicate with the Rust library.
+        Everything is done in the browser.
+    </p>
+</sl-dialog>
+
+<sl-dialog label="Supported Input" class="supported-input">
+    <p>
+        Currently only support LaTeX math with \( \) and \[ \] delimiters. Outside of math mode, the text is copied as
+        is.
+    </p>
+</sl-dialog>
+
+<sl-dialog label="Output Format" class="output-format">
+    <p>
+        The output is in <a href="https://typst.app/">Typst</a> format. Typst is a simple markup language for math typesetting. It is designed to be
+        simple and easy to read.
+    </p>
+</sl-dialog>
 
 <footer>
     <p>Powered by <a href="https://github.com/Unpredictability/tex2typst-rs">tex2typst-rs</a></p>
 </footer>
 
+<script>
+    const alert = document.getElementById("loading");
+    alert.toast();
+
+    addEventListener("TrunkApplicationStarted", () => {
+        const alert = document.getElementById("loading");
+        alert.hide();
+    });
+</script>
+
+<script>
+    const themeSelect = document.getElementById("theme-select");
+
+    // Function to update the theme
+    function applyTheme(theme) {
+        const html = document.documentElement;
+
+        if (theme === "light") {
+            html.classList.remove("sl-theme-dark");
+            html.classList.add("sl-theme-light");
+            localStorage.setItem("theme", "light");
+        } else if (theme === "dark") {
+            html.classList.remove("sl-theme-light");
+            html.classList.add("sl-theme-dark");
+            localStorage.setItem("theme", "dark");
+        } else {
+            // Detect system preference
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            html.classList.remove("sl-theme-light", "sl-theme-dark");
+            if (prefersDark) {
+                html.classList.add("sl-theme-dark");
+            } else {
+                html.classList.add("sl-theme-light");
+            }
+            localStorage.setItem("theme", "system");
+        }
+    }
+
+    // Listen for changes in system theme and apply it dynamically
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+        if (localStorage.getItem("theme") === "system") {
+            applyTheme("system");
+        }
+    });
+
+    // Load stored theme on page load
+    document.addEventListener("DOMContentLoaded", () => {
+        const savedTheme = localStorage.getItem("theme") || "system";
+        themeSelect.value = savedTheme;
+        applyTheme(savedTheme);
+    });
+
+    // Change theme when user selects an option
+    themeSelect.addEventListener("sl-select", (event) => {
+        applyTheme(event.detail.item.value);
+    });
+</script>
+
+<script>
+    const texInput = document.getElementById("tex");
+    const macrosInput = document.getElementById("macros");
+
+    // Default values
+    const DEFAULT_TEX_CODE = `Here comes some text
+\\[
+    x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}
+\\]
+The following use some custom macros (see below)
+\\(\\R \\N\\)
+\\(\\Arg\\)
+\\(\\pp[f]{x}\\)
+\\(\\pp{y}\\)`;
+    const DEFAULT_CUSTOM_MACROS = `\\newcommand{\\N}{\\mathbb{N}}
+\\newcommand{\\R}{\\mathbb{R}}
+\\newcommand{\\Arg}{\\operatorname{Arg}}
+% it support more complex macros as well
+\\newcommand{\\pp}[2][]{\\frac{\\partial #1}{\\partial #2}}`;
+
+    // Load saved values or set defaults
+    document.addEventListener("DOMContentLoaded", () => {
+        texInput.value = localStorage.getItem("texInput") || DEFAULT_TEX_CODE;
+        macrosInput.value = localStorage.getItem("macrosInput") || DEFAULT_CUSTOM_MACROS;
+    });
+
+    // Save input on change
+    texInput.addEventListener("input", () => {
+        localStorage.setItem("texInput", texInput.value);
+    });
+
+    macrosInput.addEventListener("input", () => {
+        localStorage.setItem("macrosInput", macrosInput.value);
+    });
+</script>
+
 <script type="module">
     window.addEventListener("TrunkApplicationStarted", (event) => {
         console.log("WASM fully loaded", event.detail.wasm);
 
-        // Now it's safe to use your Worker
+        // Custom function to emit toast notifications
+        function notify(message, variant = 'primary', icon = 'info-circle', duration = 3000) {
+            const alert = Object.assign(document.createElement('sl-alert'), {
+                variant,
+                closable: true,
+                duration: duration,
+                countdown: "rtl",
+                innerHTML: `
+        <sl-icon name="${icon}" slot="icon"></sl-icon>
+        ${message}
+      `
+            });
+
+            document.body.append(alert);
+            return alert.toast();
+        }
+
+        // Function to show or update an error alert
+        function showErrorAlert(message) {
+            let alert = document.getElementById("error-message");
+            alert.innerHTML = `
+            <sl-icon name="exclamation-triangle" slot="icon"></sl-icon>
+            ${message}
+        `;
+            alert.toast();
+            alert.style.display = "block";
+        }
+
+        // Function to remove error alert
+        function removeErrorAlert() {
+            const alert = document.getElementById("error-message");
+            // alert.hide();
+            alert.style.display = "none";
+        }
+
+        // Initialize the worker
         let worker = new window.wasmBindings.Worker();
 
-        // Example: Hook up TeX input to call the worker
+        // check if the custom macros input has some value, if true, register them
+        if (document.querySelector("#macros").value) {
+            worker.register_macros(document.querySelector("#macros").value);
+        }
+
+        // check if tex input has some value, if true, process it
+        if (document.querySelector("#tex").value) {
+            document.getElementById("typst").value = worker.work(document.querySelector("#tex").value);
+        }
+
+        // Hook up TeX input to call the worker
         document.getElementById("tex").addEventListener("input", async (event) => {
             const input = event.target.value;
             try {
-                const output = await worker.work(input);
-                document.getElementById("typst").value = output;
+                document.getElementById("typst").value = worker.work(input);
+                removeErrorAlert();
             } catch (error) {
                 console.error("Error processing TeX input:", error);
+                showErrorAlert(error);
+            }
+        });
+
+        // Hook up register button to call the worker
+        document.getElementById("register").addEventListener("click", async (event) => {
+            const input = document.querySelector("#macros").value;
+            try {
+                let res = worker.register_macros(input);
+                console.log(res);
+                notify("Custom macros registered successfully, total:" + res, "success", "check-circle");
+            } catch (error) {
+                console.error("Error registering custom macros:", error);
             }
         });
     });

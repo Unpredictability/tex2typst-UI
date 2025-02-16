@@ -4,8 +4,8 @@ use tex2typst_rs::converter::convert_tree;
 use tex2typst_rs::tex_parser::LatexParser;
 use tex2typst_rs::tex_tokenizer::tokenize;
 use tex2typst_rs::typst_writer::TypstWriter;
+use typstyle_core;
 use wasm_bindgen::prelude::*;
-use web_sys::{console, window, Document, Event, HtmlTextAreaElement};
 
 #[wasm_bindgen]
 struct Worker {
@@ -52,7 +52,7 @@ impl Worker {
             last_match = m.end();
         }
         new.push_str(&tex[last_match..]);
-        Ok(new)
+        Ok(typstyle_core::format_with_width(&new, 80))
     }
 
     fn convert_math(&mut self, tex: &str) -> Result<String, String> {
@@ -68,7 +68,8 @@ impl Worker {
         Ok(typst)
     }
 
-    fn register_macros(&mut self, macros: &str) -> Result<usize, String> {
+    #[wasm_bindgen]
+    pub fn register_macros(&mut self, macros: &str) -> Result<usize, String> {
         self.command_registry.custom_macros.clear();
         self.command_registry.custom_macro_names.clear();
         self.command_registry
@@ -77,42 +78,4 @@ impl Worker {
     }
 }
 
-fn main() {
-    console_error_panic_hook::set_once();
-
-    let document = window()
-        .and_then(|win| win.document())
-        .expect("Could not access the document");
-    let body = document.body().expect("Could not access document.body");
-    let text_node = document.create_text_node("Hello, world from Vanilla Rust!");
-    body.append_child(text_node.as_ref())
-        .expect("Failed to append text");
-}
-
-#[wasm_bindgen]
-pub fn log_message() {
-    console::log_1(&"Hello from Rust!".into());
-}
-
-const DEFAULT_TEX_CODE: &str = r"Here comes some text
-\[
-    x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
-\]
-
-The following use some custom macros (see below)
-\(\R\)
-
-\(\Arg \Log \Int \ball \disk\)";
-const DEFAULT_CUSTOM_MACROS: &str = r"\newcommand{\N}{\mathbb{N}}
-\newcommand{\Z}{\mathbb{Z}}
-\newcommand{\Q}{\mathbb{Q}}
-\newcommand{\R}{\mathbb{R}}
-\newcommand{\CC}{\mathbb{C}}
-\newcommand{\HH}{\mathbb{H}}
-\newcommand{\T}{\mathbb{T}}
-\newcommand{\Arg}{\operatorname{Arg}}
-\newcommand{\Log}{\operatorname{Log}}
-\newcommand{\ball}{\mathbb{B}}
-\newcommand{\disk}{\mathbb{D}}
-\newcommand{\Int}{\operatorname{Int}}
-";
+fn main() {}
